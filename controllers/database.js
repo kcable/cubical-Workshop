@@ -2,7 +2,7 @@ const fs = require("fs");
 const path = require("path");
 const filePath = path.resolve(__dirname, "../config/database.json");
 
-function saveCube(CubeData){
+function saveCube(CubeData,callback){
     getCubes((db)=>{
         db.push(CubeData);
         fs.writeFile(filePath, JSON.stringify(db), (err) => {
@@ -12,6 +12,7 @@ function saveCube(CubeData){
               console.log(
                 ` ${CubeData.id} is succesfully stored in ${filePath} `
               );
+              callback();
             }
           });
    });
