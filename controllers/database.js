@@ -37,9 +37,28 @@ function getCubes(callback){
       });
 }
 
+function getSearch(callback,search,to,from){
+    to = to.length === 0 ? 7 : Number(to);
+    from = from.length === 0 ? 1 : Number(from);
+    
+   
+     getCubes((cubes)=>{
+         let matches = [];
+        
+         cubes.forEach(element => {
+             if(element.name === search || (element.dificultyLevel >= from && element.dificultyLevel <= to) ){
+                    matches.push(element);
+             }
+         });
+        
+         callback(matches);
+     })
+}
 
 module.exports = { 
     saveCube,
     getCube,
-    getCubes
+    getCubes,
+    getSearch
+
 }

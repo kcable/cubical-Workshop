@@ -16,7 +16,7 @@ class Cube {
     this.imageUrl =
       imageUrl ||
       "https://images-na.ssl-images-amazon.com/images/I/51GGLwk-bLL._AC_SY355_.jpg";
-    this.dificultyLevel = dificultyLevel || 1;
+    this.dificultyLevel = Number(dificultyLevel) || 1;
   }
 
   //todo: SaveCube
