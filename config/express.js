@@ -11,6 +11,7 @@ module.exports = (app) => {
     })
   );
   app.set("view engine", ".hbs");
+  app.use(express.urlencoded({ extended: true}));
 
   //TODO: Setup the body parser
 

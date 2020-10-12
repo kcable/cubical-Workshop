@@ -20,7 +20,7 @@ class Cube {
   }
 
   //todo: SaveCube
-  save() {
+  save(callback) {
     const CubeData = {
       id: this.id,
       name: this.name,
@@ -29,7 +29,7 @@ class Cube {
       dificultyLevel: this.dificultyLevel,
     };
     
-    saveCube(CubeData);
+    saveCube(CubeData, callback);
     
   }
 }
