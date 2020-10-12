@@ -1,16 +1,45 @@
 // TODO: Require Controllers...
 
 const { Router } = require("express");
-const { getCubes, getCube } = require("../controllers/database");
+const { getCubes, getCube , getSearch } = require("../controllers/database");
 const  Cube  = require( "../models/cube");
-
+let flag = false;
+let results;
 const router = new Router();
 
 router.get("/", (req, res) => {
-  getCubes((cubes)=>{
-    res.render("index", { title: "Cube Workshop", cubes });
-  })
+  if(!flag){
+    getCubes((cubes)=>{
+      res.render("index", { title: "Cube Workshop", cubes });
+    })
+  } else{
+     const cubes = results;
+      res.render("index", { title: "Cube Workshop", cubes });
+    }
+  
 });
+
+
+router.post("/", (req, res) => {
+  const {
+    search,
+    from,
+    to
+    } = req.body
+  flag = true;
+ // console.log(req.body);
+  getSearch((cubes)=>{
+    results = cubes;
+    res.redirect("/");
+  },search,to,from)
+
+ 
+});
+
+router.post("/clear",(req,res)=>{
+  flag = false;
+  res.redirect("/");
+})
 
 router.get("/about", (req, res) => {
   res.render("about", { title: "Cube Workshop|About" });
