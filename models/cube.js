@@ -1,37 +1,11 @@
-// Id - number
-// • Name – string
-// • Description – string
-// • Image URL – string
-// • Difficulty Level– number
-const { v4 } = require("uuid");
-// uslovieto na zadachata iska da se zapisvat kubovete vuv fail za tova shte polzvam fs modula
+const mongoose = require("mongoose");
 
-const { saveCube } = require("../controllers/database");
+const CubeSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  description: { type: String, required: true, maxlength: 2000 },
+  imageUrl: { type: String, required: true },
+  difficulty: { type: Number, required: true, max: 6, min: 1 },
+  accessories: [{ type: mongoose.Types.ObjectId, ref: "Accessory" }],
+});
 
-class Cube {
-  constructor(name, description, imageUrl, dificultyLevel) {
-    this.id = v4();
-    this.name = name || "No Name";
-    this.description = description || "No description";
-    this.imageUrl =
-      imageUrl ||
-      "https://images-na.ssl-images-amazon.com/images/I/51GGLwk-bLL._AC_SY355_.jpg";
-    this.dificultyLevel = Number(dificultyLevel) || 1;
-  }
-
-  //todo: SaveCube
-  save(callback) {
-    const CubeData = {
-      id: this.id,
-      name: this.name,
-      description: this.description,
-      imageUrl: this.imageUrl,
-      dificultyLevel: this.dificultyLevel,
-    };
-    
-    saveCube(CubeData, callback);
-    
-  }
-}
-
-module.exports = Cube;
+module.exports = mongoose.model("Cube", CubeSchema);
