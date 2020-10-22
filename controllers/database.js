@@ -12,8 +12,8 @@ async function getCubes() {
 }
 
 module.exports = {
-  saveCube,
+  //saveCube,
   getCube,
   getCubes,
-  getSearch,
+  // getSearch,
 };

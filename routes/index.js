@@ -1,7 +1,7 @@
 // TODO: Require Controllers...
 
 const { Router } = require("express");
-const { getCubes, getCube, getSearch } = require("../controllers/database");
+const { getCubes, getCube } = require("../controllers/database");
 const Cube = require("../models/cube");
 let flag = false;
 let results;
