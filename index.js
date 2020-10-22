@@ -1,9 +1,24 @@
+require("dotenv").config();
 const env = process.env.NODE_ENV || "development";
-
+const mongoose = require("mongoose");
 const config = require("./config/config")[env];
 const express = require("express");
 const indexRoute = require("./routes");
 const app = express();
+
+const url = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@gettingstarted.lywkb.mongodb.net/SoftUni?retryWrites=true&w=majority`;
+
+mongoose.connect(
+  url,
+  { useNewUrlParser: true, useUnifiedTopology: true },
+  async function (err) {
+    if (err) {
+      console.error(err);
+      return;
+    }
+    console.log("Database connection established");
+  }
+);
 
 require("./config/express")(app);
 
