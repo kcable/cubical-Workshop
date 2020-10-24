@@ -10,7 +10,7 @@ const url = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@getting
 
 mongoose.connect(
   url,
-  { useNewUrlParser: true, useUnifiedTopology: true },
+  { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false },
   async function (err) {
     if (err) {
       console.error(err);
