@@ -8,4 +8,8 @@ const CubeSchema = new mongoose.Schema({
   accessories: [{ type: mongoose.Types.ObjectId, ref: "Accessory" }],
 });
 
+CubeSchema.path("imageUrl").validate(function (url) {
+  return url.startsWith("http://") || url.startsWith("https://");
+}, "Not valid image Url");
+
 module.exports = mongoose.model("Cube", CubeSchema);
