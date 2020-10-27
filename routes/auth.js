@@ -1,16 +1,11 @@
 const express = require("express");
 const User = require("../models/user");
-const {
-  saveUser,
-  verifyUser,
-  logUserOut,
-} = require("../controllers/userController");
+const { saveUser, verifyUser } = require("../controllers/userController");
 
 const {
   authAcess,
   guestAcess,
   userAcess,
-  authAcessJSON,
 } = require("../controllers/userController");
 const router = express.Router();
 
@@ -41,8 +36,8 @@ router.post("/login", async (req, res) => {
   res.redirect("/");
 });
 
-router.get("/logout", authAcess, async (req, res) => {
-  await logUserOut(req, res);
+router.get("/logout", authAcess, (req, res) => {
+  res.clearCookie("aid");
   res.redirect("/");
 });
 

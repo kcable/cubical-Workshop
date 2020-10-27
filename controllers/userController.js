@@ -49,8 +49,6 @@ const verifyUser = async (req, res) => {
   return status;
 };
 
-const logUserOut = async (req, res) => {};
-
 const authAcess = (req, res, next) => {
   const token = req.cookies["aid"];
   if (!token) {
@@ -112,7 +110,6 @@ module.exports = {
   authAcess,
   saveUser,
   verifyUser,
-  logUserOut,
   guestAcess,
   userAcess,
   authAcessJSON,
