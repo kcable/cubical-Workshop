@@ -1,35 +1,41 @@
 const express = require("express");
 const jwt = require("jsonwebtoken");
-const {
-  getCubes,
-  getCube,
-  getAccessories,
-  updateCube,
-  getCubeWithAccessories,
-} = require("../controllers/database");
+const { getCubeWithAccessories } = require("../controllers/database");
 const Cube = require("../models/cube");
-const Accessory = require("../models/accessory");
+
 const router = new express.Router();
+const {
+  authAcess,
+  userAcess,
+  authAcessJSON,
+} = require("../controllers/userController");
 
-router.get("/edit/:id", (req, res) => {
-  res.render("editCubePage");
+router.get("/edit/:id", authAcess, userAcess, (req, res) => {
+  res.render("editCubePage", { isLoggedIn: req.isLoggedIn });
 });
 
-router.get("/delete/:id", (req, res) => {
-  res.render("deleteCubePage");
+router.get("/delete/:id", authAcess, userAcess, (req, res) => {
+  res.render("deleteCubePage", { isLoggedIn: req.isLoggedIn });
 });
 
-router.get("/details/:id", async (req, res) => {
+router.get("/details/:id", userAcess, async (req, res) => {
   const cube = await getCubeWithAccessories(req.params.id);
 
-  res.render("details", { title: "Cube Workshop|Details", ...cube });
+  res.render("details", {
+    title: "Cube Workshop|Details",
+    ...cube,
+    isLoggedIn: req.isLoggedIn,
+  });
 });
 
-router.get("/create", (req, res) => {
-  res.render("create", { title: "Cube Workshop|Create" });
+router.get("/create", authAcess, userAcess, (req, res) => {
+  res.render("create", {
+    title: "Cube Workshop|Create",
+    isLoggedIn: req.isLoggedIn,
+  });
 });
 
-router.post("/create", (req, res) => {
+router.post("/create", authAcessJSON, (req, res) => {
   const { name, description, imageUrl, difficultyLevel } = req.body;
 
   const token = req.cookies["aid"];

@@ -6,14 +6,24 @@ const {
   logUserOut,
 } = require("../controllers/userController");
 
+const {
+  authAcess,
+  guestAcess,
+  userAcess,
+  authAcessJSON,
+} = require("../controllers/userController");
 const router = express.Router();
 
-router.get("/login", (req, res) => {
-  res.render("loginPage");
+router.get("/login", guestAcess, userAcess, (req, res) => {
+  res.render("loginPage", {
+    isLoggedIn: req.isLoggedIn,
+  });
 });
 
-router.get("/register", (req, res) => {
-  res.render("registerPage");
+router.get("/register", guestAcess, userAcess, (req, res) => {
+  res.render("registerPage", {
+    isLoggedIn: req.isLoggedIn,
+  });
 });
 
 router.post("/register", async (req, res) => {
@@ -31,7 +41,7 @@ router.post("/login", async (req, res) => {
   res.redirect("/");
 });
 
-router.get("/logout", async (req, res) => {
+router.get("/logout", authAcess, async (req, res) => {
   await logUserOut(req, res);
   res.redirect("/");
 });

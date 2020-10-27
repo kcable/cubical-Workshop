@@ -1,22 +1,17 @@
 // TODO: Require Controllers...
 
 const { Router } = require("express");
-const {
-  getCubes,
-  getCube,
-  getAccessories,
-  updateCube,
-  getCubeWithAccessories,
-} = require("../controllers/database");
-const Cube = require("../models/cube");
-const Accessory = require("../models/accessory");
-let flag = false;
-let results;
+const { getCubes } = require("../controllers/database");
+const { userAcess, authAcessJSON } = require("../controllers/userController");
 const router = new Router();
 
-router.get("/", async (req, res) => {
+router.get("/", userAcess, async (req, res) => {
   const cubes = await getCubes();
-  res.render("index", { title: "Cube Workshop", cubes });
+  res.render("index", {
+    title: "Cube Workshop",
+    cubes,
+    isLoggedIn: req.isLoggedIn,
+  });
 });
 
 // router.post("/", (req, res) => {           IMPLEMENT LATER OK /?
@@ -34,8 +29,11 @@ router.get("/", async (req, res) => {
 //   );
 // });
 
-router.get("/about", (req, res) => {
-  res.render("about", { title: "Cube Workshop|About" });
+router.get("/about", userAcess, (req, res) => {
+  res.render("about", {
+    title: "Cube Workshop|About",
+    isLoggedIn: req.isLoggedIn,
+  });
 });
 
 router.post("/clear", (req, res) => {
@@ -43,8 +41,8 @@ router.post("/clear", (req, res) => {
   res.redirect("/");
 });
 
-router.get("*", (req, res) => {
-  res.render("404", { title: "Cube Workshop|404" });
+router.get("*", userAcess, (req, res) => {
+  res.render("404", { title: "Cube Workshop|404", isLoggedIn: req.isLoggedIn });
 });
 
 module.exports = router;
