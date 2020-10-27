@@ -27,7 +27,6 @@ const saveUser = async (req, res) => {
 
   const token = genToken(userObject._id, userObject.username);
 
-  console.log("token", token);
   res.cookie("aid", token);
 
   return true;
@@ -52,8 +51,69 @@ const verifyUser = async (req, res) => {
 
 const logUserOut = async (req, res) => {};
 
+const authAcess = (req, res, next) => {
+  const token = req.cookies["aid"];
+  if (!token) {
+    return res.redirect("/");
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.PRIVATE_KEY);
+
+    next();
+  } catch (e) {
+    console.error(e);
+    res.redirect("/");
+  }
+};
+
+const guestAcess = (req, res, next) => {
+  const token = req.cookies["aid"];
+  if (token) {
+    return res.redirect("/");
+  }
+  next();
+};
+
+const userAcess = (req, res, next) => {
+  const token = req.cookies["aid"];
+  if (!token) {
+    req.isLoggedIn = false;
+  }
+
+  try {
+    jwt.verify(token, process.env.PRIVATE_KEY);
+    req.isLoggedIn = true;
+  } catch (err) {
+    req.isLoggedIn = false;
+  }
+
+  next();
+};
+
+const authAcessJSON = (req, res, next) => {
+  const token = req.cookies["aid"];
+  if (!token) {
+    return res.json({
+      error: "Not authenticated",
+    });
+  }
+  try {
+    jwt.verify(token, process.env.PRIVATE_KEY);
+    next();
+  } catch (err) {
+    res.json({
+      error: "Not authenticated",
+    });
+  }
+};
+
 module.exports = {
+  authAcess,
   saveUser,
   verifyUser,
   logUserOut,
+  guestAcess,
+  userAcess,
+  authAcessJSON,
 };
