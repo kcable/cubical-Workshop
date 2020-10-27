@@ -1,5 +1,5 @@
 const express = require("express");
-
+const jwt = require("jsonwebtoken");
 const {
   getCubes,
   getCube,
@@ -32,11 +32,15 @@ router.get("/create", (req, res) => {
 router.post("/create", (req, res) => {
   const { name, description, imageUrl, difficultyLevel } = req.body;
 
+  const token = req.cookies["aid"];
+  const decoded = jwt.verify(token, process.env.PRIVATE_KEY);
+
   let cube = new Cube({
     name,
     description,
     imageUrl,
     difficulty: difficultyLevel,
+    creatorId: decoded.userID,
   });
 
   cube.save((err) => {

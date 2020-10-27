@@ -50,7 +50,10 @@ const verifyUser = async (req, res) => {
   return status;
 };
 
+const logUserOut = async (req, res) => {};
+
 module.exports = {
   saveUser,
   verifyUser,
+  logUserOut,
 };
