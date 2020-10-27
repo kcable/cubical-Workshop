@@ -3,7 +3,10 @@ const env = process.env.NODE_ENV || "development";
 const mongoose = require("mongoose");
 const config = require("./config/config")[env];
 const express = require("express");
-const indexRoute = require("./routes");
+const indexRoute = require("./routes/index");
+const authRoutes = require("./routes/auth");
+const cubeRoutes = require("./routes/cube");
+const acessRoutes = require("./routes/acessory");
 const app = express();
 
 const url = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@gettingstarted.lywkb.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`;
@@ -22,6 +25,9 @@ mongoose.connect(
 
 require("./config/express")(app);
 
+app.use("/", authRoutes);
+app.use("/", acessRoutes);
+app.use("/", cubeRoutes);
 app.use("/", indexRoute);
 
 app.listen(
