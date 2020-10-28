@@ -35,28 +35,29 @@ router.get("/create", authAcess, userAcess, (req, res) => {
   });
 });
 
-router.post("/create", authAcessJSON, (req, res) => {
+router.post("/create", authAcessJSON, async (req, res) => {
   const { name, description, imageUrl, difficultyLevel } = req.body;
 
   const token = req.cookies["aid"];
   const decoded = jwt.verify(token, process.env.PRIVATE_KEY);
 
   let cube = new Cube({
-    name,
+    name: name.trim(),
     description,
     imageUrl,
     difficulty: difficultyLevel,
     creatorId: decoded.userID,
   });
-
-  cube.save((err) => {
-    if (err) {
-      console.error(err);
-      res.redirect("/create");
-      return;
-    } else {
-      res.redirect("/");
-    }
-  });
+  try {
+    await cube.save();
+    return res.redirect("/");
+  } catch (err) {
+    res.render("create", {
+      title: "Cube Workshop|Create",
+      isLoggedIn: req.isLoggedIn,
+      err,
+      message: err,
+    });
+  }
 });
 module.exports = router;

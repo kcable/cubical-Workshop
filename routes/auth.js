@@ -12,27 +12,44 @@ const router = express.Router();
 router.get("/login", guestAcess, userAcess, (req, res) => {
   res.render("loginPage", {
     isLoggedIn: req.isLoggedIn,
+    err: false,
+    message: "",
   });
 });
 
 router.get("/register", guestAcess, userAcess, (req, res) => {
   res.render("registerPage", {
     isLoggedIn: req.isLoggedIn,
+    err: false,
+    message: "",
   });
 });
 
 router.post("/register", async (req, res) => {
-  const status = await saveUser(req, res);
+  const { error, message } = await saveUser(req, res);
 
-  if (status) {
-    res.redirect("/");
-  } else {
-    console.error("Can`t create");
+  if (error) {
+    console.log(message);
+    return res.render("registerPage", {
+      isLoggedIn: req.isLoggedIn,
+      err: error,
+      message: message,
+    });
   }
+
+  res.redirect("/");
 });
 
 router.post("/login", async (req, res) => {
-  await verifyUser(req, res);
+  const { err, message } = await verifyUser(req, res);
+  if (err) {
+    res.render("loginPage", {
+      isLoggedIn: req.isLoggedIn,
+      err,
+      message,
+    });
+    return;
+  }
   res.redirect("/");
 });
 
