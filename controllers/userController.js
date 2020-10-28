@@ -12,41 +12,55 @@ const genToken = (id, username) => {
 const saveUser = async (req, res) => {
   const { username, password, repeatPassword } = req.body;
 
-  if (password !== repeatPassword) {
-    console.error("Passwords don`t match");
-    res.status(406).send("Passwords do not match !");
-    return false;
+  if (
+    password !== repeatPassword ||
+    !password ||
+    password.length < 8 ||
+    !password.match(/^[A-Za-z0-9]{8,20}$/)
+  ) {
+    return {
+      error: true,
+      message: "Passwords do not match or is below 8 chars  !",
+    };
   }
 
-  const salt = await bcrypt.genSalt(10);
-  const hashedPas = await bcrypt.hash(password, salt);
+  try {
+    const salt = await bcrypt.genSalt(10);
+    const hashedPas = await bcrypt.hash(password, salt);
+    const user = new User({ username, password: hashedPas });
 
-  const user = new User({ username, password: hashedPas });
+    const userObject = await user.save();
 
-  const userObject = await user.save();
+    const token = genToken(userObject._id, userObject.username);
 
-  const token = genToken(userObject._id, userObject.username);
+    res.cookie("aid", token);
 
-  res.cookie("aid", token);
-
-  return true;
+    return token;
+  } catch (err) {
+    return { error: true, message: err };
+  }
 };
 
 const verifyUser = async (req, res) => {
   const { username, password } = req.body;
 
   // check if user exists
-  const user = await User.findOne({ username });
+  try {
+    const user = await User.findOne({ username });
+    if (!user) {
+      return { err: true, message: "No such user" };
+    }
+    const status = await bcrypt.compare(password, user.password);
+    if (!status) {
+      return { err: true, message: "No password Match" };
+    }
 
-  const status = await bcrypt.compare(password, user.password);
-  if (!status) {
-    console.error("no Password match");
-    return false;
+    const token = genToken(user._id, user.username);
+    res.cookie("aid", token);
+    return status;
+  } catch (err) {
+    return { err: true, message: "Unexpected error" };
   }
-
-  const token = genToken(user._id, user.username);
-  res.cookie("aid", token);
-  return status;
 };
 
 const authAcess = (req, res, next) => {

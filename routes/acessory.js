@@ -44,7 +44,7 @@ router.get("/attach/accessory/:id", authAcess, userAcess, async (req, res) => {
   });
 });
 
-router.post("/create/accessory", authAcessJSON, (req, res) => {
+router.post("/create/accessory", authAcessJSON, async (req, res) => {
   const { name, description, imageUrl } = req.body;
 
   let accessory = new Accessory({
@@ -53,15 +53,17 @@ router.post("/create/accessory", authAcessJSON, (req, res) => {
     imageUrl,
   });
 
-  accessory.save((err) => {
-    if (err) {
-      console.error(err);
-      res.redirect("/create/accessory");
-      return;
-    } else {
-      res.redirect("/");
-    }
-  });
+  try {
+    await accessory.save();
+    return res.redirect("/");
+  } catch (err) {
+    res.render("createAccessory", {
+      title: "Cube Workshop|Create  Accessory",
+      isLoggedIn: req.isLoggedIn,
+      err,
+      message: err,
+    });
+  }
 });
 
 router.post("/attach/accessory/:id", authAcessJSON, async (req, res) => {
